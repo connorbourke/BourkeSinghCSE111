@@ -5,6 +5,6 @@ WHERE p_id IN
     SELECT p_id
     FROM Player, PlayerStats
     WHERE p_id = ps_playerid
-    AND ps_goals < 2
+    AND ps_goals < 6
     )
 ;
