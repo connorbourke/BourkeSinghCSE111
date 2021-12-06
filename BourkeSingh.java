@@ -426,7 +426,7 @@ public class BourkeSingh {
         int m_awaygoals = Integer.valueOf(scan.nextLine());
 
         try {
-            String sql = "INSERT INTO match (m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, m_awaygoals) VALUES(?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO Match (m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, m_awaygoals) VALUES(?,?,?,?,?,?,?)";
             
             PreparedStatement stmt = c.prepareStatement(sql);
     
@@ -437,6 +437,160 @@ public class BourkeSingh {
             stmt.setInt(5, m_homegoals);
             stmt.setInt(6, m_awayteam);
             stmt.setInt(7, m_awaygoals);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void insertTeam()
+    {
+        System.out.println("Please enter values for t_id, t_team. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        int t_id = Integer.valueOf(scan.nextLine());
+        String t_team = scan.nextLine();
+
+        try {
+            String sql = "INSERT INTO Team (t_id, t_team) VALUES(?,?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, t_id);
+            stmt.setString(2, t_team);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void insertPlayer()
+    {
+        System.out.println("Please enter values for p_id, p_name. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        int p_id = Integer.valueOf(scan.nextLine());
+        String p_name = scan.nextLine();
+
+        try {
+            String sql = "INSERT INTO Player (p_id, p_name) VALUES(?,?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, p_id);
+            stmt.setString(2, p_name);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void insertCoach()
+    {
+        System.out.println("Please enter values for c_teamid, c_id, c_name. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        int c_teamid = Integer.valueOf(scan.nextLine());
+        int c_id = Integer.valueOf(scan.nextLine());
+        String c_name = scan.nextLine();
+
+        try {
+            String sql = "INSERT INTO Coach (c_teamid, c_id, c_name) VALUES(?,?,?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, c_teamid);
+            stmt.setInt(2, c_id);
+            stmt.setString(3, c_name);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void insertCup()
+    {
+        System.out.println("Please enter values for w_year, w_host, w_winner, w_second, w_third, w_numteams, matchesplayed, and w_goals. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        String w_year = scan.nextLine();
+        int w_host = Integer.valueOf(scan.nextLine());
+        int w_winner = Integer.valueOf(scan.nextLine());
+        int w_second = Integer.valueOf(scan.nextLine());
+        int w_third = Integer.valueOf(scan.nextLine());
+        int w_numteams = Integer.valueOf(scan.nextLine());
+        int matchesplayed = Integer.valueOf(scan.nextLine());
+        int w_goals = Integer.valueOf(scan.nextLine());
+
+        try {
+            String sql = "INSERT INTO WorldCup (w_year, w_host, w_winner, w_second, w_third, w_numteams, matchesplayed, w_goals) VALUES(?,?,?,?,?,?,?,?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setString(1, w_year);
+            stmt.setInt(2, w_host);
+            stmt.setInt(3, w_winner);
+            stmt.setInt(4, w_second);
+            stmt.setInt(5, w_third);
+            stmt.setInt(6, w_numteams);
+            stmt.setInt(7, matchesplayed);
+            stmt.setInt(8, w_goals);
 
             stmt.executeUpdate();
             c.commit();
@@ -483,10 +637,10 @@ public class BourkeSingh {
                 System.out.println("Q3");
                 System.out.println("Q4");
                 System.out.println("insert into match : allows you to insert a row into the Match table");
-                System.out.println("Q6");
-                System.out.println("Q7");
-                System.out.println("Q8");
-                System.out.println("Q9");
+                System.out.println("insert into team  : allows you to insert a row into the Team table");
+                System.out.println("insert into player : allows you to insert a row into the Player table");
+                System.out.println("insert into coach : allows you to insert a row into the Coach table");
+                System.out.println("insert into cup : allows you to insert a row into the WorldCup table");
                 System.out.println("Q10");
                 System.out.println("Q11");
                 System.out.println("Q12");
@@ -520,39 +674,29 @@ public class BourkeSingh {
             else if(cmd.equals("insert into match"))
             {
                 sj.insertMatch();
-            }/*
-            else if(cmd.equals("Q1"))
+            }
+            else if(cmd.equals("insert into team"))
             {
                 sj.insertTeam();
             }
-            else if(cmd == cmd.equals("Q1"))
+            else if(cmd.equals("insert into player"))
             {
                 sj.insertPlayer();
             }
-            else if(cmd.equals("Q1"))
+            else if(cmd.equals("insert into coach"))
             {
                 sj.insertCoach();
             }
-            else if(cmd.equals("Q1"))
+            else if(cmd.equals("insert into cup"))
             {
                 sj.insertCup();
-            }*/
+            }
 
 
             System.out.println("\nPlease enter a command.\n");
         }
 
-/*
-        sj.dropTable();
-        sj.createTable();
-        sj.populateTable();
-
-        sj.Q1();
-        sj.Q2();
-        sj.Q3();
-        sj.Q4();
-        sj.Q5();
-*/
+        scan.close();
         sj.closeConnection();
     }
 }
