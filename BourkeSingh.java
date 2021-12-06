@@ -6,8 +6,9 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.File;
+import java.util.Scanner;
 
-public class Database {
+public class BourkeSingh {
     private Connection c = null;
     private String dbName;
     private boolean isConnected = false;
@@ -410,13 +411,136 @@ public class Database {
         System.out.println("++++++++++++++++++++++++++++++++++");
     }
 
+    private void insertMatch()
+    {
+        System.out.println("Please enter values for m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, and m_awaygoals. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        int m_id = Integer.valueOf(scan.nextLine());
+        String stage = scan.nextLine();
+        String m_city = scan.nextLine();
+        int m_hometeam = Integer.valueOf(scan.nextLine());
+        int m_homegoals = Integer.valueOf(scan.nextLine());
+        int m_awayteam = Integer.valueOf(scan.nextLine());
+        int m_awaygoals = Integer.valueOf(scan.nextLine());
+
+        try {
+            String sql = "INSERT INTO match (m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, m_awaygoals) VALUES(?,?,?,?,?,?,?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, m_id);
+            stmt.setString(2, stage);
+            stmt.setString(3, m_city);
+            stmt.setInt(4, m_hometeam);
+            stmt.setInt(5, m_homegoals);
+            stmt.setInt(6, m_awayteam);
+            stmt.setInt(7, m_awaygoals);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
 
     public static void main(String args[]) {
-        Database sj = new Database();
+        BourkeSingh sj = new BourkeSingh();
         
         sj.openConnection("WorldCups.sqlite");
 
-        
+        System.out.println("Sentience acheived. Hello world. What is my purpose?");
+
+        Scanner scan = new Scanner(System.in);
+        int sentinel = 0;
+
+        System.out.println("Type \"help\" to see a list of possible commands.");
+
+        while (sentinel == 0)
+        {
+            String cmd = scan.nextLine();
+
+            if(cmd.equals("stop"))
+            {
+                sentinel = 1;
+            }
+            else if(cmd.equals("help"))
+            {
+                System.out.println("Q1");
+                System.out.println("Q2");
+                System.out.println("Q3");
+                System.out.println("Q4");
+                System.out.println("insert into match : allows you to insert a row into the Match table");
+                System.out.println("Q6");
+                System.out.println("Q7");
+                System.out.println("Q8");
+                System.out.println("Q9");
+                System.out.println("Q10");
+                System.out.println("Q11");
+                System.out.println("Q12");
+                System.out.println("Q13");
+                System.out.println("Q14");
+                System.out.println("Q15");
+                System.out.println("Q16");
+                System.out.println("Q17");
+                System.out.println("Q18");
+                System.out.println("Q19");
+                System.out.println("Q20");
+                System.out.println("Q21");
+                System.out.println("Q22");
+            }
+            else if(cmd.equals("Q1"))
+            {
+                sj.Q1();
+            }
+            else if(cmd.equals("Q2"))
+            {
+                sj.Q2();
+            }
+            else if(cmd.equals("Q3"))
+            {
+                sj.Q3();
+            }
+            else if(cmd.equals("Q4"))
+            {
+                sj.Q4();
+            }
+            else if(cmd.equals("insert into match"))
+            {
+                sj.insertMatch();
+            }/*
+            else if(cmd.equals("Q1"))
+            {
+                sj.insertTeam();
+            }
+            else if(cmd == cmd.equals("Q1"))
+            {
+                sj.insertPlayer();
+            }
+            else if(cmd.equals("Q1"))
+            {
+                sj.insertCoach();
+            }
+            else if(cmd.equals("Q1"))
+            {
+                sj.insertCup();
+            }*/
+
+
+            System.out.println("\nPlease enter a command.\n");
+        }
 
 /*
         sj.dropTable();

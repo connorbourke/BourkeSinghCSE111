@@ -1,2 +1,0 @@
-INSERT INTO WorldCup 
-VALUES (2023, 24 , 12, 8 , 3 ,32  ,64 ,169); 
