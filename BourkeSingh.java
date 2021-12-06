@@ -411,6 +411,54 @@ public class BourkeSingh {
         System.out.println("++++++++++++++++++++++++++++++++++");
     }
 
+    private void getAllCoaches()
+    {
+
+        System.out.printf("\nname   |   team\n");
+
+        try {
+            String sql = "SELECT c.c_name, t.t_team FROM Coach c JOIN Team t ON c.c_teamid=t.t_id";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", name, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void getAllCupResults()
+    {
+
+        System.out.printf("\nyear   |   winning team\n");
+
+        try {
+            String sql = "SELECT w.w_year, t.t_team FROM WorldCup w JOIN Team t ON t.t_id=w.w_winner ORDER BY w_year DESC";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String year = rs.getString(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", year, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     private void insertMatch()
     {
         System.out.println("Please enter values for m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, and m_awaygoals. (Be sure to press ENTER after each value)");
@@ -610,6 +658,39 @@ public class BourkeSingh {
         }
     }
 
+    private void retireCoach()
+    {
+        System.out.println("Please enter the c_id of the coach you wish to remove.");
+
+        Scanner scan = new Scanner(System.in);
+
+        int c_id = Integer.valueOf(scan.nextLine());
+
+        try {
+            String sql = "DELETE FROM Coach WHERE c_id = ?";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, c_id);
+
+            stmt.executeUpdate();
+            c.commit();
+
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
     public static void main(String args[]) {
         BourkeSingh sj = new BourkeSingh();
         
@@ -632,8 +713,9 @@ public class BourkeSingh {
             }
             else if(cmd.equals("help"))
             {
-                System.out.println("Q1");
-                System.out.println("Q2");
+                System.out.println("stop : ends the program");
+                System.out.println("get all coaches : returns the names and corresponding teams of all rows in the Coach table");
+                System.out.println("get all cups : returns the winner for each year in the WorldCup table");
                 System.out.println("Q3");
                 System.out.println("Q4");
                 System.out.println("insert into match : allows you to insert a row into the Match table");
@@ -647,7 +729,7 @@ public class BourkeSingh {
                 System.out.println("Q13");
                 System.out.println("Q14");
                 System.out.println("Q15");
-                System.out.println("Q16");
+                System.out.println("retire coach : allows you to remove a row from the Coach table");
                 System.out.println("Q17");
                 System.out.println("Q18");
                 System.out.println("Q19");
@@ -655,13 +737,13 @@ public class BourkeSingh {
                 System.out.println("Q21");
                 System.out.println("Q22");
             }
-            else if(cmd.equals("Q1"))
+            else if(cmd.equals("get all coaches"))
             {
-                sj.Q1();
+                sj.getAllCoaches();
             }
-            else if(cmd.equals("Q2"))
+            else if(cmd.equals("get all cups"))
             {
-                sj.Q2();
+                sj.getAllCupResults();
             }
             else if(cmd.equals("Q3"))
             {
@@ -690,6 +772,10 @@ public class BourkeSingh {
             else if(cmd.equals("insert into cup"))
             {
                 sj.insertCup();
+            }
+            else if(cmd.equals("retire coach"))
+            {
+                sj.retireCoach();
             }
 
 
