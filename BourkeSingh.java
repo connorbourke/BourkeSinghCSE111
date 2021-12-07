@@ -459,6 +459,53 @@ public class BourkeSingh {
         }
     }
 
+    private void getAllPlayers()
+    {
+
+        System.out.printf("\nname   |   team\n");
+
+        try {
+            String sql = "SELECT p.p_name, t.t_team FROM Player p JOIN LinkPlayerAndTeams L on L.p_id = p.p_id JOIN Team t ON l.t_id=t.t_id";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", name, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void getAllTeams()
+    {
+
+        System.out.printf("\n team\n");
+
+        try {
+            String sql = "SELECT t_team FROM Team";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String team = rs.getString(1);
+
+                System.out.printf("%s\n", team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     private void insertMatch()
     {
         System.out.println("Please enter values for m_id, stage, m_city, m_hometeam, m_homegoals, m_awayteam, and m_awaygoals. (Be sure to press ENTER after each value)");
@@ -658,6 +705,208 @@ public class BourkeSingh {
         }
     }
 
+    private void bestPlayerOnTeam()
+    {
+
+        System.out.println("Please enter a team name. (t_team)");
+
+        Scanner scan = new Scanner(System.in);
+
+        String t_name = scan.nextLine();
+
+        System.out.printf("\n name  |  goals\n");
+
+        try {
+            String sql = "SELECT p_name, ps.ps_goals FROM Player JOIN PlayerStats ps ON p_id=ps.ps_playerid "+
+            "WHERE p_name IN (SELECT p_name FROM Player p join LinkPlayerAndTeams L on l.p_id=p.p_id "+
+            "JOIN Team t ON l.t_id=t.t_id WHERE t.t_team LIKE ?) "+
+            "ORDER BY ps.ps_goals DESC LIMIT 1";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+
+            stmt.setString(1, "%" + t_name + "%");
+
+            System.out.println("\nAfter setString\n" + sql + "\n");
+
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString(1);
+                int goals = rs.getInt(2);
+
+                System.out.printf("%s | %s\n", name, goals);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void numOfMatches()
+    {
+
+        System.out.printf("\nmatches | team\n");
+
+        try {
+            String sql = "SELECT count(t.t_team) AS '# of matches played', t.t_team "+
+            "FROM Team t "+
+            "JOIN Match m ON m.m_hometeam=t.t_id "+
+            "GROUP BY t.t_team "+
+            "ORDER BY count(t.t_team) DESC LIMIT 1";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                int num = rs.getInt(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", num, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void playersFromTeam()
+    {
+
+        System.out.println("Please enter a team name. (t_team)");
+
+        Scanner scan = new Scanner(System.in);
+
+        String t_name = scan.nextLine();
+
+        System.out.printf("\n  name  |  team\n");
+
+        try {
+            String sql = "SELECT p.p_name, t.t_team "+
+            "FROM Player p JOIN LinkPlayerAndTeams L on L.p_id=p.p_id "+
+            "JOIN Team t ON L.t_id=t.t_id "+
+            "WHERE t.t_team LIKE ?";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            
+            stmt.setString(1, "%" + t_name + "%");
+
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", name, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void cupWithMostGoals()
+    {
+
+        System.out.printf("\nyear | goals\n");
+
+        try {
+            String sql = "SELECT w_year, max(w_goals) FROM WorldCup";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String year = rs.getString(1);
+                int goals = rs.getInt(2);
+
+                System.out.printf("%s | %s\n", year, goals);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void playerWithMostGoals()
+    {
+
+        System.out.printf("\n name  |  goals\n");
+
+        try {
+            String sql = "SELECT p.p_name, ps.ps_goals FROM Player p JOIN PlayerStats ps "+
+                "ON p.p_id=ps.ps_playerid ORDER BY  ps.ps_goals DESC LIMIT 1";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String name = rs.getString(1);
+                int goals = rs.getInt(2);
+
+                System.out.printf("%s | %s\n", name, goals);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void teamWithMostCups()
+    {
+
+        System.out.printf("\nwins | team\n");
+
+        try {
+            String sql = "SELECT count(w.w_winner) AS 'Most Wins' , t.t_team FROM WorldCup w "+
+            "JOIN Team t ON t.t_id=w.w_winner GROUP BY w.w_winner "+
+            "ORDER BY count(w.w_winner) DESC LIMIT 1";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                int wins = rs.getInt(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", wins, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void topFiveTeams()
+    {
+        System.out.printf("\nplace | team\n");
+
+        try {
+            String sql = "SELECT (ROW_NUMBER() OVER (ORDER BY t_team)) AS 'Place' , t_team AS 'Country' "+
+            "FROM (SELECT t_team FROM Team JOIN WorldCup w ON w.w_winner=t_id  GROUP BY w.w_winner "+
+            "ORDER BY count(w.w_winner) DESC LIMIT 5)";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                int place = rs.getInt(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", place, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     private void retireCoach()
     {
         System.out.println("Please enter the c_id of the coach you wish to remove.");
@@ -691,6 +940,39 @@ public class BourkeSingh {
         }
     }
 
+    private void dropWorstPlayers()
+    {
+        System.out.println("Please enter threshold for elimination in goals.\n(Ex: Enter 5 to drop players with fewer than 5 goals");
+
+        Scanner scan = new Scanner(System.in);
+
+        int goals = Integer.valueOf(scan.nextLine());
+
+        try {
+            String sql = "DELETE FROM Player WHERE p_id IN (SELECT p_id "+
+            "FROM Player, PlayerStats WHERE p_id = ps_playerid AND ps_goals < ?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, goals);
+
+            stmt.executeUpdate();
+            c.commit();
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
     public static void main(String args[]) {
         BourkeSingh sj = new BourkeSingh();
         
@@ -705,6 +987,8 @@ public class BourkeSingh {
 
         while (sentinel == 0)
         {
+            System.out.println("\nPlease enter a command.\n");
+
             String cmd = scan.nextLine();
 
             if(cmd.equals("stop"))
@@ -716,26 +1000,26 @@ public class BourkeSingh {
                 System.out.println("stop : ends the program");
                 System.out.println("get all coaches : returns the names and corresponding teams of all rows in the Coach table");
                 System.out.println("get all cups : returns the winner for each year in the WorldCup table");
-                System.out.println("Q3");
-                System.out.println("Q4");
+                System.out.println("get all players : returns the names and corresponding teams of all rows in the Player table");
+                System.out.println("get all teams : returns the team names of all rows in the Team table");
                 System.out.println("insert into match : allows you to insert a row into the Match table");
                 System.out.println("insert into team  : allows you to insert a row into the Team table");
                 System.out.println("insert into player : allows you to insert a row into the Player table");
                 System.out.println("insert into coach : allows you to insert a row into the Coach table");
                 System.out.println("insert into cup : allows you to insert a row into the WorldCup table");
-                System.out.println("Q10");
-                System.out.println("Q11");
-                System.out.println("Q12");
-                System.out.println("Q13");
-                System.out.println("Q14");
-                System.out.println("Q15");
+                System.out.println("best player : returns the best player from your team of choice");
+                System.out.println("most matches : returns the team with the most matches ever played");
+                System.out.println("players on team : returns all players from your team of choice");
+                System.out.println("cup with most goals : returns the year with the most goals in the WorldCup table");
+                System.out.println("player with most goals : returns the player with the most goals");
+                System.out.println("team with most cups : returns the number of wins and name of the team that has won the most World Cups");
+                System.out.println("top five : returns the top five teams based on World Cups won");
                 System.out.println("retire coach : allows you to remove a row from the Coach table");
-                System.out.println("Q17");
+                System.out.println("drop worst : removes the players that have fewer goals than a number of your choice");
                 System.out.println("Q18");
                 System.out.println("Q19");
                 System.out.println("Q20");
                 System.out.println("Q21");
-                System.out.println("Q22");
             }
             else if(cmd.equals("get all coaches"))
             {
@@ -745,13 +1029,13 @@ public class BourkeSingh {
             {
                 sj.getAllCupResults();
             }
-            else if(cmd.equals("Q3"))
+            else if(cmd.equals("get all players"))
             {
-                sj.Q3();
+                sj.getAllPlayers();
             }
-            else if(cmd.equals("Q4"))
+            else if(cmd.equals("get all teams"))
             {
-                sj.Q4();
+                sj.getAllTeams();
             }
             else if(cmd.equals("insert into match"))
             {
@@ -773,13 +1057,45 @@ public class BourkeSingh {
             {
                 sj.insertCup();
             }
+            else if(cmd.equals("best player"))
+            {
+                sj.bestPlayerOnTeam();
+            }
+            else if(cmd.equals("most matches"))
+            {
+                sj.numOfMatches();
+            }
+            else if(cmd.equals("players on team"))
+            {
+                sj.playersFromTeam();
+            }
+            else if(cmd.equals("cup with most goals"))
+            {
+                sj.cupWithMostGoals();
+            }
+            else if(cmd.equals("player with most goals"))
+            {
+                sj.playerWithMostGoals();
+            }
+            else if(cmd.equals("team with most cups"))
+            {
+                sj.teamWithMostCups();
+            }
+            else if(cmd.equals("top five"))
+            {
+                sj.topFiveTeams();
+            }
             else if(cmd.equals("retire coach"))
             {
                 sj.retireCoach();
             }
+            else if(cmd.equals("drop worst"))
+            {
+                sj.dropWorstPlayers();
+            }
+            else
+                System.out.println("\nInavild Command");
 
-
-            System.out.println("\nPlease enter a command.\n");
         }
 
         scan.close();
