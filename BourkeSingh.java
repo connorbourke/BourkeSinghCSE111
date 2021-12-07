@@ -692,6 +692,35 @@ public class BourkeSingh {
         }
     }
 
+    private void homeTeamStats()
+    {
+
+        System.out.printf("\n  team  |  city  | year | goals\n");
+
+        try {
+            String sql = "SELECT t.t_team, m.m_city, w.w_year, m.m_homegoals FROM Match m "+
+            "JOIN LinkWorldCupAndMatch L ON l.m_id=m.m_id "+
+            "JOIN WorldCup w ON w.w_year=l.w_year "+
+            "JOIN Team t ON t.t_id=m.m_hometeam";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                String team = rs.getString(1);
+                String city = rs.getString(2);
+                String year = rs.getString(3);
+                int goals = rs.getInt(4);
+
+                System.out.printf("%s | %s | %s | %s\n", team, city, year, goals);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     private void timesHosted()
     {
         System.out.printf("\nhosted | team\n");
@@ -791,7 +820,7 @@ public class BourkeSingh {
                 System.out.println("drop worst : removes the players that have fewer goals than a number of your choice");
                 System.out.println("update coach team : updates the team id for a row in the Coach table");
                 System.out.println("update player cups : adds 1 to a player's cupsplayed stat");
-                System.out.println("Q20");
+                System.out.println("home team : gives the team name, city, year, and goals for each row in Match");
                 System.out.println("times hosted : returns the number of times each country has hosted a World Cup");
                 System.out.println("custom : allows you to submit a custom UPDATE/INSERT/DELETE query");
             }
@@ -875,9 +904,9 @@ public class BourkeSingh {
             {
                 sj.updatePlayerCups();
             }
-            else if(cmd.equals("Q20"))
+            else if(cmd.equals("home team"))
             {
-                sj.updatePlayerCups();
+                sj.homeTeamStats();
             }
             else if(cmd.equals("times hosted"))
             {

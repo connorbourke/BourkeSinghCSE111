@@ -1,4 +1,6 @@
-Select m.m_id, m.m_city, w.w_year, w.w_goals 
-from match m 
-join LinkWorldCupAndMatch L on l.m_id=m.m_id 
-join WorldCup w on w.w_year=l.w_year;
+SELECT t.t_team, m.m_city, w.w_year, m.m_homegoals 
+FROM Match m 
+JOIN LinkWorldCupAndMatch L ON l.m_id=m.m_id 
+JOIN WorldCup w ON w.w_year=l.w_year
+JOIN Team t ON t.t_id=m.m_hometeam
+;
