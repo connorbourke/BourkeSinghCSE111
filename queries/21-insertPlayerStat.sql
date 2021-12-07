@@ -1,2 +1,0 @@
-INSERT INTO PlayerStats
-VALUES (436, 19, 4, 6);
