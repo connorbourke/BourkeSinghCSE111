@@ -942,7 +942,7 @@ public class BourkeSingh {
 
     private void dropWorstPlayers()
     {
-        System.out.println("Please enter threshold for elimination in goals.\n(Ex: Enter 5 to drop players with fewer than 5 goals");
+        System.out.println("Please enter threshold for elimination in goals.\n(Ex: Enter 5 to drop players with fewer than 5 goals)");
 
         Scanner scan = new Scanner(System.in);
 
@@ -966,6 +966,127 @@ public class BourkeSingh {
                {
                     c.rollback();
                }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void updateCoachTeam()
+    {
+        System.out.println("Please enter the new c_teamid and the c_name. (Be sure to press ENTER after each value)");
+
+        Scanner scan = new Scanner(System.in);
+
+        int c_teamid = Integer.valueOf(scan.nextLine());
+        String c_name = scan.nextLine();
+
+        try {
+            String sql = "UPDATE Coach SET c_teamid = ? WHERE c_name LIKE ?";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, c_teamid);
+            stmt.setString(2, "%" + c_name + "%");
+
+            stmt.executeUpdate();
+            c.commit();
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void updatePlayerCups()
+    {
+        System.out.println("Please enter the p_id of the player to update");
+
+        Scanner scan = new Scanner(System.in);
+
+        int p_id = Integer.valueOf(scan.nextLine());
+
+        try {
+            String sql = "UPDATE PlayerStats SET ps_cupsplayed = (ps_cupsplayed + 1) WHERE ps_playerid IN "+
+            "(SELECT ps_playerid FROM Player, PlayerStats WHERE p_id = ps_playerid AND p_id = ?)";
+            
+            PreparedStatement stmt = c.prepareStatement(sql);
+    
+            stmt.setInt(1, p_id);
+
+            stmt.executeUpdate();
+            c.commit();
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+               {
+                    c.rollback();
+               }
+                catch(SQLException e1)
+                {
+                    System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+                }
+        }
+    }
+
+    private void timesHosted()
+    {
+        System.out.printf("\nhosted | team\n");
+
+        try {
+            String sql = "Select Count (w.w_host) as 'hostCount', t.t_team from match m "+
+            "join LinkWorldCupAndMatch L on l.m_id=m.m_id join WorldCup w on w.w_year=l.w_year "+
+            "join Team t on t.t_id=w.w_host group by w.w_host ORDER BY hostCount DESC, w.w_host ASC";
+
+            PreparedStatement stmt = c.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next())
+            {
+                int hosted = rs.getInt(1);
+                String team = rs.getString(2);
+
+                System.out.printf("%s | %s\n", hosted, team);
+            } 
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private void customQuery()
+    {
+        System.out.printf("\nEnter your custom SQLite query as a single line. (Does not support SELECT statements)\n");
+
+        Scanner scan = new Scanner(System.in);
+
+        String sql = scan.nextLine();
+
+        try
+        {
+            PreparedStatement stmt = c.prepareStatement(sql);
+
+            stmt.executeUpdate();
+            c.commit();
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            try
+            {
+                    c.rollback();
+            }
                 catch(SQLException e1)
                 {
                     System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
@@ -1016,10 +1137,11 @@ public class BourkeSingh {
                 System.out.println("top five : returns the top five teams based on World Cups won");
                 System.out.println("retire coach : allows you to remove a row from the Coach table");
                 System.out.println("drop worst : removes the players that have fewer goals than a number of your choice");
-                System.out.println("Q18");
-                System.out.println("Q19");
+                System.out.println("update coach team : updates the team id for a row in the Coach table");
+                System.out.println("update player cups : adds 1 to a player's cupsplayed stat");
                 System.out.println("Q20");
-                System.out.println("Q21");
+                System.out.println("times hosted : returns the number of times each country has hosted a World Cup");
+                System.out.println("custom : allows you to submit a custom UPDATE/INSERT/DELETE query");
             }
             else if(cmd.equals("get all coaches"))
             {
@@ -1092,6 +1214,26 @@ public class BourkeSingh {
             else if(cmd.equals("drop worst"))
             {
                 sj.dropWorstPlayers();
+            }
+            else if(cmd.equals("update coach team"))
+            {
+                sj.updateCoachTeam();
+            }
+            else if(cmd.equals("update player cups"))
+            {
+                sj.updatePlayerCups();
+            }
+            else if(cmd.equals("Q20"))
+            {
+                sj.updatePlayerCups();
+            }
+            else if(cmd.equals("times hosted"))
+            {
+                sj.timesHosted();
+            }
+            else if(cmd.equals("custom"))
+            {
+                sj.customQuery();
             }
             else
                 System.out.println("\nInavild Command");
